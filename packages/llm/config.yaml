@@ -1,0 +1,8 @@
+# Asignación de modelo por rol (ADR-006, tabla §2.1 del planning).
+# Los identificadores de modelo viven SOLO aquí — nunca hardcodeados.
+# Se consume a partir de F2; el id Flash vigente se verifica en AI Studio antes de usarlo.
+defaults:
+  local: "ollama:qwen3:8b"
+  cloud: "google_genai:PENDIENTE-verificar-id-flash-en-ai-studio"
+
+roles: {}

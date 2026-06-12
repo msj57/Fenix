@@ -1,0 +1,11 @@
+# Activa la GPU NVIDIA para Ollama: `make up GPU=1`.
+# Requiere NVIDIA Container Toolkit (en Windows: Docker Desktop + WSL2).
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

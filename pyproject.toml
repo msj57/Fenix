@@ -1,0 +1,76 @@
+[project]
+name = "fenix"
+version = "0.1.0"
+description = "Plataforma AIOps agéntica de resolución de incidencias"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+# La raíz depende de todos los miembros para que `uv sync` instale el workspace completo.
+dependencies = [
+    "fenix-api",
+    "fenix-agents",
+    "fenix-ingestion",
+    "fenix-mcp",
+    "fenix-retrieval",
+    "fenix-llm",
+    "fenix-guardrails",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "pre-commit>=4.0",
+]
+
+[tool.uv.workspace]
+members = ["apps/*", "packages/*"]
+
+[tool.uv.sources]
+fenix-api = { workspace = true }
+fenix-agents = { workspace = true }
+fenix-ingestion = { workspace = true }
+fenix-mcp = { workspace = true }
+fenix-retrieval = { workspace = true }
+fenix-llm = { workspace = true }
+fenix-guardrails = { workspace = true }
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "C4", "PTH", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "fenix_api",
+    "fenix_agents",
+    "fenix_ingestion",
+    "fenix_mcp",
+    "fenix_retrieval",
+    "fenix_llm",
+    "fenix_guardrails",
+]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+files = ["apps", "packages"]
+mypy_path = [
+    "apps/api/src",
+    "apps/agents/src",
+    "apps/ingestion/src",
+    "apps/mcp_server/src",
+    "packages/retrieval/src",
+    "packages/llm/src",
+    "packages/guardrails/src",
+]
+explicit_package_bases = true
+warn_unreachable = true
+warn_redundant_casts = true
+
+[tool.pytest.ini_options]
+testpaths = ["apps", "packages"]
+addopts = "-ra -q"

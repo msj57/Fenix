@@ -1,0 +1,44 @@
+# Stack base de Fénix (F0): Postgres+pgvector y Ollama.
+# Perfiles (§1 del planning): full (todo) · lite (CI / 16 GB) · cloud-llm (sin Ollama).
+# Langfuse y demo-env llegan en F2/F3.
+name: fenix
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    profiles: [full, lite, cloud-llm]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fenix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD en .env}
+      POSTGRES_DB: ${POSTGRES_DB:-fenix}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-fenix} -d $${POSTGRES_DB:-fenix}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ollama:
+    # TODO(F2): pinear tag al fijar el modelo definitivo.
+    image: ollama/ollama:latest
+    profiles: [full, lite]
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+volumes:
+  pgdata:
+  ollama:
