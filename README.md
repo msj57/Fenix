@@ -1,4 +1,4 @@
-# Fénix 🔥
+# Fénix
 
 **Plataforma AIOps agéntica de resolución de incidencias.** Un sistema multi-agente recibe una
 incidencia de infraestructura, la triajea, investiga en una base de conocimiento (RAG híbrido),
