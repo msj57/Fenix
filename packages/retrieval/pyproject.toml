@@ -3,7 +3,16 @@ name = "fenix-retrieval"
 version = "0.1.0"
 description = "Búsqueda híbrida RRF + reranker (F1)"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "psycopg[binary]>=3.2",
+    "sentence-transformers>=3.3",
+    "torch>=2.5",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
 
 [build-system]
 requires = ["hatchling"]
