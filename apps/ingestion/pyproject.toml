@@ -3,7 +3,13 @@ name = "fenix-ingestion"
 version = "0.1.0"
 description = "Pipeline de ingesta: parse -> chunk -> embed -> upsert (F1)"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "fenix-retrieval",
+    "pyyaml>=6.0",
+]
+
+[tool.uv.sources]
+fenix-retrieval = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

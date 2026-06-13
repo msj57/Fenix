@@ -9,7 +9,7 @@ COMPOSE += -f deploy/compose/gpu.override.yml
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help install up down logs test lint fmt
+.PHONY: help install up down logs test lint fmt ingest
 
 help: ## Lista los targets disponibles
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -25,6 +25,9 @@ down: .env ## Para el stack
 
 logs: .env ## Sigue los logs del stack
 	$(COMPOSE) logs -f
+
+ingest: .env ## Ingesta corpus/ → pgvector + FTS (idempotente por hash)
+	uv run --env-file .env python -m fenix_ingestion
 
 test: ## Tests unitarios (LLMs mockeados; rápidos y gratis)
 	uv run pytest
