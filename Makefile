@@ -9,7 +9,7 @@ COMPOSE += -f deploy/compose/gpu.override.yml
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help install up down logs test lint fmt ingest
+.PHONY: help install up down logs test lint fmt ingest eval-retrieval eval-chunking
 
 help: ## Lista los targets disponibles
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -28,6 +28,14 @@ logs: .env ## Sigue los logs del stack
 
 ingest: .env ## Ingesta corpus/ → pgvector + FTS (idempotente por hash)
 	uv run --env-file .env python -m fenix_ingestion
+
+# OMP/torch a pocos hilos: con bge-m3 y el reranker (modelos pequeños en CPU) usar
+# todos los núcleos genera contención y va más lento que con 4 hilos.
+eval-retrieval: .env ## Evals L1: denso vs híbrido vs híbrido+rerank → docs/evals.md
+	OMP_NUM_THREADS=4 uv run --env-file .env python evals/run_retrieval.py
+
+eval-chunking: .env ## Experimento L1: target=500 vs 250 tokens (tabla temporal) → docs/evals.md
+	OMP_NUM_THREADS=4 uv run --env-file .env python evals/run_chunking_experiment.py
 
 test: ## Tests unitarios (LLMs mockeados; rápidos y gratis)
 	uv run pytest

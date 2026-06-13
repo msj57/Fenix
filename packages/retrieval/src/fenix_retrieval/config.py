@@ -28,6 +28,11 @@ class RetrievalSettings(BaseSettings):
     embedding_dim: int = 1024
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
 
+    # Dispositivo de embedder/reranker. Por defecto "cpu" (§1/ADR-009: la VRAM es para
+    # Ollama en F2+). "auto" usa GPU si está disponible; útil en evals, donde Ollama no
+    # compite por la VRAM. "cuda" la fuerza.
+    device: str = "cpu"
+
     rrf_k: int = 60
     candidates_per_source: int = 20
     rerank_candidates: int = 20
@@ -42,3 +47,17 @@ def get_pg_settings() -> PostgresSettings:
 @lru_cache(maxsize=1)
 def get_settings() -> RetrievalSettings:
     return RetrievalSettings()
+
+
+def resolve_device() -> str:
+    """Resuelve el setting `device` a un dispositivo concreto para sentence-transformers.
+
+    "auto" elige cuda si hay GPU visible, cpu en caso contrario. "cpu"/"cuda" se respetan
+    tal cual. La importación de torch es perezosa para no pagarla si no hace falta.
+    """
+    device = get_settings().device
+    if device != "auto":
+        return device
+    import torch
+
+    return "cuda" if torch.cuda.is_available() else "cpu"

@@ -1,9 +1,12 @@
-"""Cross-encoder bge-reranker-v2-m3 en CPU, carga perezosa (como embedder)."""
+"""Cross-encoder bge-reranker-v2-m3, carga perezosa (como embedder).
+
+Dispositivo según config (`resolve_device`): cpu por defecto, GPU si se pide (ADR-009).
+"""
 
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
-from fenix_retrieval.config import get_settings
+from fenix_retrieval.config import get_settings, resolve_device
 from fenix_retrieval.models import ChunkResult
 
 if TYPE_CHECKING:
@@ -14,7 +17,7 @@ if TYPE_CHECKING:
 def _model() -> "CrossEncoder":
     from sentence_transformers import CrossEncoder
 
-    model: CrossEncoder = CrossEncoder(get_settings().reranker_model, device="cpu")
+    model: CrossEncoder = CrossEncoder(get_settings().reranker_model, device=resolve_device())
     return model
 
 
