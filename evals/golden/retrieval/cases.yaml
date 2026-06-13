@@ -1,0 +1,254 @@
+# Golden set de retrieval (F1). Cada caso: una pregunta y los documentos relevantes
+# (source_path relativo a corpus/). La relevancia se ancla al documento, no al chunk:
+# estable frente a reingestas y a cambios de estrategia de chunking.
+#
+# Mezcla deliberada:
+#   - casos con vocabulario literal del documento (favorecen al léxico/FTS)
+#   - casos parafraseados o conceptuales (favorecen al denso)
+#   - casos ES y EN (el corpus es bilingüe)
+#   - algún caso multi-documento (varios docs igualmente válidos)
+
+- id: r01
+  lang: es
+  question: "La web devuelve 502 Bad Gateway de forma intermitente, ¿qué reviso?"
+  relevant: [runbooks/rb-001-nginx-502.md]
+
+- id: r02
+  lang: es
+  question: "nginx registra connect() failed (111: Connection refused) hacia el upstream webapp"
+  relevant: [runbooks/rb-001-nginx-502.md]
+
+- id: r03
+  lang: es
+  question: "QueuePool limit of size reached y conexiones idle in transaction en Postgres"
+  relevant: [runbooks/rb-002-postgres-pool-agotado.md]
+
+- id: r04
+  lang: es
+  question: "Cómo veo cuántas conexiones activas tiene la base de datos y matar las transacciones colgadas"
+  relevant: [runbooks/rb-002-postgres-pool-agotado.md]
+
+- id: r05
+  lang: en
+  question: "Redis returns OOM command not allowed when used memory exceeds maxmemory"
+  relevant: [runbooks/rb-003-redis-oom.md]
+
+- id: r06
+  lang: en
+  question: "How do I find the biggest keys filling up Redis memory?"
+  relevant: [runbooks/rb-003-redis-oom.md]
+
+- id: r07
+  lang: es
+  question: "Postgres en read-only con No space left on device, disco al 90%"
+  relevant: [runbooks/rb-004-disco-lleno.md]
+
+- id: r08
+  lang: es
+  question: "Cómo libero espacio en disco borrando imágenes y contenedores huérfanos de Docker"
+  relevant: [runbooks/rb-004-disco-lleno.md]
+
+- id: r09
+  lang: es
+  question: "Edité la configuración de nginx y ahora el reload falla con un error emerg"
+  relevant: [runbooks/rb-005-nginx-config-rota.md]
+
+- id: r10
+  lang: es
+  question: "Cómo valido la sintaxis de nginx antes de recargar"
+  relevant: [runbooks/rb-005-nginx-config-rota.md]
+
+- id: r11
+  lang: es
+  question: "El navegador dice NET::ERR_CERT_DATE_INVALID, el certificado parece caducado"
+  relevant: [runbooks/rb-006-certificado-tls-caducado.md]
+
+- id: r12
+  lang: es
+  question: "Cómo compruebo la fecha de expiración del certificado TLS que sirve nginx"
+  relevant: [runbooks/rb-006-certificado-tls-caducado.md]
+
+- id: r13
+  lang: en
+  question: "Services cannot reach each other by name: could not translate host name, getaddrinfo failed"
+  relevant: [runbooks/rb-007-dns-interno.md]
+
+- id: r14
+  lang: en
+  question: "Connections by IP work but resolving the service hostname fails inside the container"
+  relevant: [runbooks/rb-007-dns-interno.md]
+
+- id: r15
+  lang: en
+  question: "The webapp container keeps restarting with exit code 137 and OOMKilled true"
+  relevant: [runbooks/rb-008-webapp-oom.md]
+
+- id: r16
+  lang: en
+  question: "How to tell if a container was killed by the kernel out-of-memory killer"
+  relevant: [runbooks/rb-008-webapp-oom.md]
+
+- id: r17
+  lang: es
+  question: "Un listado va lento de golpe tras una carga masiva, la consulta hace Seq Scan"
+  relevant: [runbooks/rb-009-postgres-consulta-lenta.md]
+
+- id: r18
+  lang: es
+  question: "Cuándo lanzar ANALYZE para que el planificador vuelva a usar el índice"
+  relevant: [runbooks/rb-009-postgres-consulta-lenta.md]
+
+- id: r19
+  lang: en
+  question: "Redis is evicting live session keys even though memory is below the limit"
+  relevant: [runbooks/rb-010-redis-eviction-policy.md]
+
+- id: r20
+  lang: en
+  question: "Difference between allkeys-lru and noeviction for a mixed Redis workload"
+  relevant: [runbooks/rb-010-redis-eviction-policy.md]
+
+# --- Postmortems (vocabulario más narrativo: buen caso para el denso) ---
+
+- id: r21
+  lang: es
+  question: "Incidente donde un endpoint nuevo dejaba transacciones abiertas y tumbó la web"
+  relevant: [postmortems/pm-2026-02-pool-conexiones.md]
+
+- id: r22
+  lang: en
+  question: "Postmortem about users getting logged out because Redis evicted session keys"
+  relevant: [postmortems/pm-2026-04-redis-eviction.md]
+
+# --- Tickets (conversacionales) ---
+
+- id: r23
+  lang: es
+  question: "El cliente dice que la web va lenta desde esta mañana, sobre todo el listado de pedidos"
+  relevant: [tickets/tk-0042-web-lenta.md]
+
+- id: r24
+  lang: es
+  question: "Error 504 Gateway Timeout al generar el informe mensual grande"
+  relevant: [tickets/tk-0057-504-gateway-timeout.md]
+
+# --- Multi-documento: el pool agotado tiene runbook Y postmortem ---
+
+- id: r25
+  lang: es
+  question: "Cómo diagnosticar y entender un agotamiento del pool de conexiones de Postgres"
+  relevant:
+    - runbooks/rb-002-postgres-pool-agotado.md
+    - postmortems/pm-2026-02-pool-conexiones.md
+
+# ====================================================================
+# Casos añadidos al ampliar el corpus a 50 documentos (§5.1).
+# Incluyen casos "difíciles": varios docs comparten vocabulario
+# (502, timeout, sesión, lento) y el retrieval debe discriminar.
+# ====================================================================
+
+- id: r26
+  lang: es
+  question: "nginx devuelve 503 y los logs dicen limiting requests by zone"
+  relevant: [runbooks/rb-011-nginx-rate-limit.md]
+
+- id: r27
+  lang: es
+  question: "504 con upstream timed out while reading response, solo en endpoints pesados"
+  relevant: [runbooks/rb-012-nginx-upstream-timeout.md]
+
+- id: r28
+  lang: es
+  question: "La webapp no arranca tras el deploy, da ValidationError de variable de entorno"
+  relevant: [runbooks/rb-013-webapp-deploy-fallido.md]
+
+- id: r29
+  lang: en
+  question: "Spike of 500 errors right after deploying, traceback in a single endpoint"
+  relevant: [runbooks/rb-014-webapp-5xx-deploy.md]
+
+- id: r30
+  lang: es
+  question: "deadlock detected y procesos esperando ShareLock en Postgres"
+  relevant: [runbooks/rb-015-postgres-deadlock.md]
+
+- id: r31
+  lang: en
+  question: "Replica serving stale reads, replication lag is growing"
+  relevant: [runbooks/rb-016-postgres-replication-lag.md]
+
+- id: r32
+  lang: es
+  question: "La webapp no conecta con Redis: Error 111 connection refused al puerto 6379"
+  relevant: [runbooks/rb-017-redis-connection-refused.md]
+
+- id: r33
+  lang: en
+  question: "Redis latency spikes, slowlog shows KEYS and big LRANGE commands"
+  relevant: [runbooks/rb-018-redis-latency.md]
+
+- id: r34
+  lang: es
+  question: "Todo va lento a la vez y la CPU del host está al 100%"
+  relevant: [runbooks/rb-019-cpu-saturation.md]
+
+- id: r35
+  lang: en
+  question: "A service keeps flapping between healthy and unhealthy, nginx routes 502s"
+  relevant: [runbooks/rb-020-healthcheck-flapping.md]
+
+- id: r36
+  lang: en
+  question: "No space left on device but df shows free space, too many small files"
+  relevant: [runbooks/rb-022-disk-inodes.md]
+
+# --- Postmortems nuevos ---
+
+- id: r37
+  lang: es
+  question: "Postmortem de una caída total porque nginx tenía un upstream duplicado"
+  relevant: [postmortems/pm-2026-01-nginx-config.md]
+
+- id: r38
+  lang: en
+  question: "Incident where HTTPS went down at midnight because the cert expired"
+  relevant: [postmortems/pm-2026-03-cert-expiry.md]
+
+- id: r39
+  lang: en
+  question: "Postmortem of an outage from a stale internal DNS cache after a network change"
+  relevant: [postmortems/pm-2026-06-dns-outage.md]
+
+- id: r40
+  lang: en
+  question: "Incident where a migration dropped an index and the orders query went slow"
+  relevant: [postmortems/pm-2026-05-slow-query.md]
+
+# --- Tickets nuevos (conversacionales, ruido realista) ---
+
+- id: r41
+  lang: es
+  question: "Cliente dice que el login tarda diez segundos pero el resto va bien"
+  relevant: [tickets/tk-0064-login-lento.md]
+
+- id: r42
+  lang: en
+  question: "Confirmation emails arriving very late, orders themselves are fine"
+  relevant: [tickets/tk-0072-emails-no-llegan.md]
+
+- id: r43
+  lang: es
+  question: "Se duplican los pedidos cuando el cliente pulsa dos veces porque va lento"
+  relevant: [tickets/tk-0071-pedidos-duplicados.md]
+
+# --- Casos difíciles: vocabulario compartido, debe elegir el doc correcto ---
+
+- id: r44
+  lang: es
+  question: "El cliente ve 502 al entrar solo a veces y recargando entra"
+  relevant: [tickets/tk-0061-502-intermitente.md]
+
+- id: r45
+  lang: en
+  question: "Customer's browser warns the connection is not private since this morning"
+  relevant: [tickets/tk-0068-https-warning.md]

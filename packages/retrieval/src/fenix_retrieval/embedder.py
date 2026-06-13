@@ -7,7 +7,7 @@ módulo es gratis; la primera llamada paga la carga (~2 GB de RAM).
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
-from fenix_retrieval.config import get_settings
+from fenix_retrieval.config import get_settings, resolve_device
 
 if TYPE_CHECKING:
     from sentence_transformers import SentenceTransformer
@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 def _model() -> "SentenceTransformer":
     from sentence_transformers import SentenceTransformer
 
-    model: SentenceTransformer = SentenceTransformer(get_settings().embedding_model, device="cpu")
+    model: SentenceTransformer = SentenceTransformer(
+        get_settings().embedding_model, device=resolve_device()
+    )
     return model
 
 

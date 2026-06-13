@@ -22,6 +22,7 @@ dev = [
     "ruff>=0.8",
     "mypy>=1.13",
     "pre-commit>=4.0",
+    "pyyaml>=6.0",
     "types-pyyaml>=6.0",
 ]
 
@@ -65,7 +66,7 @@ known-first-party = [
 [tool.mypy]
 strict = true
 python_version = "3.12"
-files = ["apps", "packages"]
+files = ["apps", "packages", "evals"]
 mypy_path = [
     "apps/api/src",
     "apps/agents/src",
@@ -74,6 +75,7 @@ mypy_path = [
     "packages/retrieval/src",
     "packages/llm/src",
     "packages/guardrails/src",
+    "evals",
 ]
 explicit_package_bases = true
 warn_unreachable = true
